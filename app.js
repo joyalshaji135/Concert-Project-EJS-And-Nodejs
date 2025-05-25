@@ -70,6 +70,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.set('layout', 'layouts/layout');
 
+
 // Routes
 app.use('/concerts', concertRoutes);
 app.use('/bookings', bookingRoutes);

@@ -2,6 +2,7 @@ const User = require('../models/User');
 
 // Show signup form
 exports.getSignup = (req, res) => {
+  console.log('Rendering signup form');
   res.render('auth/signup', { error: null });
 };
 
@@ -52,5 +53,5 @@ exports.postLogin = async (req, res) => {
 // Handle logout
 exports.logout = (req, res) => {
   req.session.destroy();
-  res.redirect('/');
+  res.redirect('/login');
 };

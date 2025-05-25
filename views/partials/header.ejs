@@ -3,9 +3,9 @@
         <div class="px-4 py-3">
             <div class="d-flex justify-content-between align-items-center">
                 <h1 class="m-0">
-                    <a href="/" class="text-white text-decoration-none d-flex align-items-center">
-                        <i class="fas fa-music me-2" style="font-size: 1.5rem;"></i>
-                        <span class="fw-bold" style="font-family: 'Montserrat', sans-serif; letter-spacing: 1px;">ConcertHub</span>
+                    <a href="/concerts" class="text-white text-decoration-none d-flex align-items-center hover-grow">
+                        <i class="fas fa-music me-2" style="font-size: 1.5rem; transition: all 0.3s ease;"></i>
+                        <span class="fw-bold" style="font-family: 'Montserrat', sans-serif; letter-spacing: 1px; transition: all 0.3s ease;">ConcertHub</span>
                     </a>
                 </h1>
                 
@@ -14,34 +14,35 @@
                     <div class="navbar-nav">
                         <% if (user) { %>
                             <div class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" style="cursor: pointer;">
-                                    <div class="avatar me-2" style="width: 32px; height: 32px; background-color: #6c757d; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" style="cursor: pointer;" id="userDropdown">
+                                    <div class="avatar me-2" style="width: 32px; height: 32px; background-color: #6c757d; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
                                         <span class="text-white"><%= user.username.charAt(0).toUpperCase() %></span>
                                     </div>
-                                    <span class="me-1">
+                                    <span class="me-1" style="transition: all 0.3s ease;">
                                         <%= user.username %>
                                         <% if (user.role === 'admin') { %>
-                                            <span class="badge bg-primary ms-1">Admin</span>
+                                            <span class="badge bg-primary ms-1" style="transition: all 0.3s ease;">Admin</span>
                                         <% } %>
                                     </span>
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
-                                    <li><a class="dropdown-item" href="/profile"><i class="fas fa-user me-2"></i> Profile</a></li>
-                                    <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i> Settings</a></li>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 animate__animated animate__fadeIn animate__faster">
+                                    <li><a class="dropdown-item hover-slide" href="/profile"><i class="fas fa-user me-2"></i> Profile</a></li>
+                                    <li><a class="dropdown-item hover-slide" href="/concerts/get-all-booking"><i class="fas fa-ticket-alt me-2"></i> All Bookings</a></li>
+                                    <li><a class="dropdown-item hover-slide" href="/concerts/settings"><i class="fas fa-cog me-2"></i> Settings</a></li>
                                     <% if (user.role === 'admin') { %>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item text-danger" href="/admin"><i class="fas fa-lock me-2"></i> Admin Panel</a></li>
+                                        <li><a class="dropdown-item text-danger hover-slide" href="/admin"><i class="fas fa-lock me-2"></i> Admin Panel</a></li>
                                     <% } %>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                                    <li><a class="dropdown-item hover-slide" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
                                 </ul>
                             </div>
                         <% } else { %>
                             <div class="d-flex">
-                                <a href="/login" class="btn btn-outline-light me-2 hover-scale">
+                                <a href="/login" class="btn btn-outline-light me-2 hover-pulse">
                                     <i class="fas fa-sign-in-alt me-1"></i> Login
                                 </a>
-                                <a href="/register" class="btn btn-success hover-scale">
+                                <a href="/register" class="btn btn-success hover-pulse">
                                     <i class="fas fa-user-plus me-1"></i> Register
                                 </a>
                             </div>
@@ -52,3 +53,59 @@
         </div>
     </div>
 </header>
+
+<style>
+    /* Animation classes */
+    .hover-grow:hover {
+        transform: scale(1.05);
+    }
+    
+    .hover-grow:hover i,
+    .hover-grow:hover span {
+        transform: scale(1.05);
+    }
+    
+    .hover-pulse:hover {
+        animation: pulse 0.5s ease infinite alternate;
+    }
+    
+    .hover-slide:hover {
+        transform: translateX(5px);
+    }
+    
+    .dropdown-menu {
+        animation-duration: 0.2s;
+    }
+    
+    .avatar:hover {
+        transform: rotate(15deg) scale(1.1);
+        background-color: #5a6268 !important;
+    }
+    
+    @keyframes pulse {
+        from { transform: scale(1); }
+        to { transform: scale(1.05); }
+    }
+    
+    /* Transition effects */
+    a, button, .dropdown-item, .avatar {
+        transition: all 0.3s ease !important;
+    }
+    
+    .dropdown-item.hover-slide {
+        transition: transform 0.2s ease, background-color 0.3s ease !important;
+    }
+</style>
+
+<script>
+    // Add animation when dropdown opens
+    document.addEventListener('DOMContentLoaded', function() {
+        const userDropdown = document.getElementById('userDropdown');
+        if (userDropdown) {
+            userDropdown.addEventListener('shown.bs.dropdown', function () {
+                const dropdownMenu = this.nextElementSibling;
+                dropdownMenu.classList.add('animate__fadeIn');
+            });
+        }
+    });
+</script>

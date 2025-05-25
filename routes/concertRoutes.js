@@ -6,17 +6,26 @@ const { isLoggedIn, isAdmin } = require('../middleware/auth');
 
 // Public Routes
 
+router.get('/new', isLoggedIn, isAdmin, (req, res) => {
+    res.render('concerts/new'); // views/concerts/new.ejs
+});
+
+// Get All Bookings
+router.get('/get-all-booking', isLoggedIn, isAdmin, concertController.getAllBookingsAdmin);
+
 // Get all concerts
-router.get('/', concertController.getAllConcerts);
+router.get('/', isLoggedIn, isAdmin,concertController.getAllConcerts);
 
 // Get single concert
-router.get('/:id', concertController.getConcert);
+router.get('/:id', isLoggedIn, isAdmin,concertController.getConcert);
 
 //     Admin-Protected Routes
 
 // Show new concert form
-router.get('/new', isLoggedIn, isAdmin, concertController.getNewForm);
+router.get('/new', isLoggedIn, isAdmin, concertController.getCreateForm);
 
+
+router.get('/settings', isLoggedIn, isAdmin, concertController.getAllConcertsAdmin);
 // Create new concert
 router.post('/', isLoggedIn, isAdmin, upload.single('image'), concertController.createConcert);
 
@@ -28,5 +37,7 @@ router.put('/:id', isLoggedIn, isAdmin, upload.single('image'), concertControlle
 
 // Delete concert
 router.delete('/:id', isLoggedIn, isAdmin, concertController.deleteConcert);
+
+
 
 module.exports = router;

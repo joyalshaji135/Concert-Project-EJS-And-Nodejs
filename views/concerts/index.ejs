@@ -1,70 +1,99 @@
- <%- include('../partials/header') %>
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Upcoming Concerts</h1>
-    <a href="/concerts/new" class="btn btn-success">
-        <i class="fas fa-plus"></i> Add Concert
-    </a>
+
+<%- include('../partials/header') %>
+
+<div class="container py-5 animate__animated animate__fadeIn">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4 fw-bold text-gradient">Upcoming Concerts</h1>
+        <a href="/concerts/new" class="btn btn-success hover-scale shadow">
+            <i class="fas fa-plus me-2"></i> Add Concert
+        </a>
+    </div>
+
+    <% if (concerts.length === 0) { %>
+        <div class="alert alert-info shadow animate__animated animate__shakeX">
+            <i class="fas fa-info-circle me-2"></i> No concerts found. Add your first concert!
+        </div>
+    <% } else { %>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover shadow rounded-3 overflow-hidden">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Image</th>
+                        <th>Concert Details</th>
+                        <th>Date & Time</th>
+                        <th>Venue</th>
+                        <th>Tickets</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% concerts.forEach(concert => { %>
+                        <tr class="align-middle concert-row animate__animated animate__fadeInUp">
+                            <td style="width: 150px;">
+                                <img src="<%= concert.image %>" 
+                                     class="img-thumbnail concert-image shadow-sm" 
+                                     alt="<%= concert.name %>"
+                                     onerror="this.onerror=null;this.src='/images/default-concert.jpg'">
+                            </td>
+                            <td>
+                                <h5 class="fw-bold"><%= concert.name %></h5>
+                                <small class="text-muted"><%= concert.description || 'No description available' %></small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-calendar-day text-primary me-2"></i> 
+                                    <span class="fw-medium">
+                                        <%= concert.date.toLocaleDateString('en-US', { 
+                                            weekday: 'short', 
+                                            month: 'short', 
+                                            day: 'numeric', 
+                                            year: 'numeric' 
+                                        }) %>
+                                    </span>
+                                </div>
+                                <div class="d-flex align-items-center mt-2">
+                                    <i class="fas fa-clock text-primary me-2"></i>
+                                    <span class="fw-medium"><%= concert.time %></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                    <span class="fw-medium"><%= concert.venue %></span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-ticket-alt text-success me-2"></i>
+                                    <span class="fw-medium">$<%= concert.ticketPrice %></span>
+                                </div>
+                                <div class="mt-2">
+                                    <span class="badge bg-<%= concert.availableTickets > 0 ? 'success' : 'danger' %>">
+                                        <%= concert.availableTickets > 0 ? 'Available: ' + concert.availableTickets : 'Sold Out' %>
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm shadow">
+                                    <a href="/concerts/<%= concert._id %>" class="btn btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="/concerts/<%= concert._id %>/edit" class="btn btn-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="/concerts/<%= concert._id %>?_method=DELETE" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-danger">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
 </div>
 
-<% if (concerts.length === 0) { %>
-    <div class="alert alert-info">No concerts found. Add your first concert!</div>
-<% } else { %>
-    <div class="table-responsive">
-        <table class="table table-striped table-hover">
-            <thead class="thead-dark">
-                <tr>
-                    <th>Image</th>
-                    <th>Concert Details</th>
-                    <th>Date & Time</th>
-                    <th>Venue</th>
-                    <th>Tickets</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% concerts.forEach(concert => { %>
-                    <tr>
-                        <td style="width: 150px;">
-                            <img src="<%= concert.image %>" 
-                                 class="img-thumbnail" 
-                                 alt="<%= concert.name %>"
-                                 onerror="this.onerror=null;this.src='/images/default-concert.jpg'">
-                        </td>
-                        <td>
-                            <h5><%= concert.name %></h5>
-                        </td>
-                        <td>
-                            <div><i class="fas fa-calendar-day"></i> 
-                                <%= concert.date.toLocaleDateString('en-US', { 
-                                    weekday: 'short', 
-                                    month: 'short', 
-                                    day: 'numeric', 
-                                    year: 'numeric' 
-                                }) %>
-                            </div>
-                            <div><i class="fas fa-clock"></i> <%= concert.time %></div>
-                        </td>
-                        <td>
-                            <i class="fas fa-map-marker-alt"></i> <%= concert.venue %>
-                        </td>
-                        <td>
-                            <i class="fas fa-ticket-alt"></i> 
-                            $<%= concert.ticketPrice %><br>
-                            Available: <%= concert.availableTickets %>
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <a href="/concerts/<%= concert._id %>" class="btn btn-primary">View</a>
-                                <a href="/concerts/<%= concert._id %>/edit" class="btn btn-secondary">Edit</a>
-                                <form action="/concerts/<%= concert._id %>?_method=DELETE" method="POST" class="d-inline">
-                                    <button type="submit" class="btn btn-danger">Delete</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                <% }); %>
-            </tbody>
-        </table>
-    </div>
-<% } %>
 <%- include('../partials/footer') %>

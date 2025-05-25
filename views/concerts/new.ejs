@@ -1,45 +1,80 @@
- <%- include('../partials/header') %>
-<h2 class="mb-4">Add New Concert</h2>
 
-<form action="/concerts" method="POST" enctype="multipart/form-data">
-    <div class="mb-3">
-        <label for="name" class="form-label">Concert Name</label>
-        <input type="text" class="form-control" id="name" name="name" required>
-    </div>
-    
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label for="date" class="form-label">Date</label>
-            <input type="date" class="form-control" id="date" name="date" required>
+<%- include('../partials/header') %>
+
+<div class="container py-5 animate__animated animate__fadeIn">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h2 class="h4 mb-0"><i class="fas fa-plus-circle me-2"></i>Add New Concert</h2>
+                </div>
+                <div class="card-body p-4">
+                    <form action="/concerts" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        <div class="mb-4">
+                            <label for="name" class="form-label fw-bold">Concert Name</label>
+                            <input type="text" class="form-control form-control-lg" id="name" name="name" required>
+                            <div class="invalid-feedback">Please provide a concert name.</div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="date" class="form-label fw-bold">Date</label>
+                                <input type="date" class="form-control" id="date" name="date" required>
+                                <div class="invalid-feedback">Please select a date.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="time" class="form-label fw-bold">Time</label>
+                                <input type="time" class="form-control" id="time" name="time" required>
+                                <div class="invalid-feedback">Please select a time.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="venue" class="form-label fw-bold">Venue</label>
+                            <input type="text" class="form-control" id="venue" name="venue" required>
+                            <div class="invalid-feedback">Please provide a venue.</div>
+                        </div>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label for="ticketPrice" class="form-label fw-bold">Ticket Price ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" step="0.01" class="form-control" id="ticketPrice" name="ticketPrice" required>
+                                    <div class="invalid-feedback">Please provide a valid price.</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="availableTickets" class="form-label fw-bold">Available Tickets</label>
+                                <input type="number" class="form-control" id="availableTickets" name="availableTickets" required>
+                                <div class="invalid-feedback">Please provide ticket quantity.</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="image" class="form-label fw-bold">Concert Image</label>
+                            <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            <div class="form-text">Upload a high-quality image (JPEG, PNG). Max 5MB.</div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="/concerts" class="btn btn-outline-secondary px-4">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 hover-scale">
+                                <i class="fas fa-save me-2"></i>Save Concert
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <label for="time" class="form-label">Time</label>
-            <input type="time" class="form-control" id="time" name="time" required>
-        </div>
     </div>
-    
-    <div class="mb-3">
-        <label for="venue" class="form-label">Venue</label>
-        <input type="text" class="form-control" id="venue" name="venue" required>
-    </div>
-    
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label for="ticketPrice" class="form-label">Ticket Price ($)</label>
-            <input type="number" step="0.01" class="form-control" id="ticketPrice" name="ticketPrice" required>
-        </div>
-        <div class="col-md-6">
-            <label for="availableTickets" class="form-label">Available Tickets</label>
-            <input type="number" class="form-control" id="availableTickets" name="availableTickets" required>
-        </div>
-    </div>
-    
-    <div class="mb-3">
-        <label for="image" class="form-label">Concert Image</label>
-        <input type="file" class="form-control" id="image" name="image" >
-    </div>
-    
-    <button type="submit" class="btn btn-primary">Add Concert</button>
-    <a href="/concerts" class="btn btn-secondary">Cancel</a>
-</form>
+</div>
+
 <%- include('../partials/footer') %>

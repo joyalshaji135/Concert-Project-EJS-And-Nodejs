@@ -1,13 +1,121 @@
-<footer class="bg-dark text-white py-3 mt-auto footer" style="width: 100vw; margin-left: calc(-50vw + 50%);">
+<footer class="bg-dark text-white py-4 mt-auto footer" style="width: 100vw; margin-left: calc(-50vw + 50%); border-top: 1px solid rgba(255,255,255,0.1);">
     <div class="container-fluid px-0">
-        <div class="text-center px-4">
-            <p class="mb-0">&copy; 2023 ConcertHub. All rights reserved.</p>
-            <div class="mt-2">
-                <a href="/about" class="text-white-50 mx-2 text-decoration-none hover-underline">About Us</a>
-                <a href="/contact" class="text-white-50 mx-2 text-decoration-none hover-underline">Contact</a>
-                <a href="/privacy" class="text-white-50 mx-2 text-decoration-none hover-underline">Privacy Policy</a>
-                <a href="/terms" class="text-white-50 mx-2 text-decoration-none hover-underline">Terms of Service</a>
+        <div class="row g-3 px-4">
+            <div class="col-lg-4 text-center text-lg-start">
+                <div class="d-flex flex-column h-100 justify-content-between">
+                    <a href="/" class="d-flex align-items-center justify-content-center justify-content-lg-start text-decoration-none mb-3 hover-grow">
+                        <i class="fas fa-music me-2 text-primary" style="font-size: 1.5rem;"></i>
+                        <span class="fw-bold fs-5 text-white" style="font-family: 'Montserrat', sans-serif;">ConcertHub</span>
+                    </a>
+                    <p class="text-white-50 mb-0">&copy; 2023 ConcertHub. All rights reserved.</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="d-flex justify-content-center">
+                    <div class="footer-links">
+                        <h5 class="text-uppercase mb-3 text-primary" style="letter-spacing: 1px;">Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <a href="/about" class="text-white-50 text-decoration-none hover-slide">
+                                    <i class="fas fa-chevron-right me-2 small"></i>About Us
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="/contact" class="text-white-50 text-decoration-none hover-slide">
+                                    <i class="fas fa-chevron-right me-2 small"></i>Contact
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="/privacy" class="text-white-50 text-decoration-none hover-slide">
+                                    <i class="fas fa-chevron-right me-2 small"></i>Privacy Policy
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/terms" class="text-white-50 text-decoration-none hover-slide">
+                                    <i class="fas fa-chevron-right me-2 small"></i>Terms of Service
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="d-flex justify-content-center justify-content-lg-end">
+                    <div class="text-center text-lg-start">
+                        <h5 class="text-uppercase mb-3 text-primary" style="letter-spacing: 1px;">Connect With Us</h5>
+                        <div class="social-icons d-flex justify-content-center justify-content-lg-start">
+                            <a href="#" class="text-white-50 me-3 hover-bounce" aria-label="Facebook">
+                                <i class="fab fa-facebook-f fa-lg"></i>
+                            </a>
+                            <a href="#" class="text-white-50 me-3 hover-bounce" aria-label="Twitter">
+                                <i class="fab fa-twitter fa-lg"></i>
+                            </a>
+                            <a href="#" class="text-white-50 me-3 hover-bounce" aria-label="Instagram">
+                                <i class="fab fa-instagram fa-lg"></i>
+                            </a>
+                            <a href="#" class="text-white-50 hover-bounce" aria-label="YouTube">
+                                <i class="fab fa-youtube fa-lg"></i>
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-outline-light btn-sm hover-pulse" data-bs-toggle="modal" data-bs-target="#newsletterModal">
+                                <i class="fas fa-envelope me-1"></i> Subscribe to Newsletter
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </footer>
+
+<style>
+    /* Footer specific animations */
+    .footer {
+        transition: all 0.3s ease;
+    }
+    
+    .footer-links a {
+        position: relative;
+        padding-left: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+        color: white !important;
+        padding-left: 10px;
+    }
+    
+    .footer-links a i {
+        transition: transform 0.3s ease;
+    }
+    
+    .footer-links a:hover i {
+        transform: translateX(3px);
+    }
+    
+    .hover-bounce {
+        display: inline-block;
+        transition: transform 0.3s ease;
+    }
+    
+    .hover-bounce:hover {
+        transform: translateY(-3px) scale(1.1);
+        color: white !important;
+    }
+    
+    .hover-grow:hover {
+        transform: scale(1.03);
+    }
+    
+    .hover-pulse:hover {
+        animation: pulse 0.5s ease infinite alternate;
+    }
+    
+    @keyframes pulse {
+        from { transform: scale(1); }
+        to { transform: scale(1.03); }
+    }
+</style>

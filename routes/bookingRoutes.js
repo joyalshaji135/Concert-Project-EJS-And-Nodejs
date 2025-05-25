@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bookingController = require('../controllers/bookingController');
-const { isLoggedIn, isUser } = require('../middleware/auth');
+const { isLoggedIn, isUser , isAdmin} = require('../middleware/auth');
 
 //      Booking Routes
 
@@ -29,14 +29,6 @@ router.post(
     bookingController.bookTickets
 );
 
-// View all bookings
-router.get(
-    '/my-bookings',
-    isLoggedIn,
-    isUser,
-    bookingController.getAllBookings
-);
-
 // View specific booking
 router.get(
     '/my-bookings/:user_id',
@@ -44,6 +36,14 @@ router.get(
     isUser,
     bookingController.getBookingById
 );
+
+// Get All Bookings
+// router.get(
+//     '/get-all-booking',
+//     isLoggedIn,
+//     isAdmin,
+//     bookingController.getAllBookingsAdmin
+// );
 
 // Cancel booking
 router.post(

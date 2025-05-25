@@ -8,6 +8,11 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add jsPDF and html2canvas libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
       :root {
         --primary: #4cc9f0;
@@ -16,6 +21,8 @@
         --dark: #1a1a2e;
         --darker: #16213e;
         --light: #f8f9fa;
+        --light-text: #e2e8f0;
+        --muted-text: #a0aec0;
         --success: #38a169;
         --danger: #e63946;
         --warning: #ffbe0b;
@@ -23,7 +30,7 @@
 
       body {
         background: linear-gradient(135deg, #0f0f1b 0%, #0a0a12 100%);
-        color: white;
+        color: var(--light-text);
         font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         min-height: 100vh;
         display: flex;
@@ -71,6 +78,7 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
         transition: all 0.3s ease;
         overflow: hidden;
+        color: var(--light-text);
       }
 
       .card:hover {
@@ -89,7 +97,7 @@
         --bs-table-bg: transparent;
         --bs-table-striped-bg: rgba(255, 255, 255, 0.02);
         --bs-table-hover-bg: rgba(76, 201, 240, 0.08);
-        color: white;
+        color: var(--light-text);
         margin-bottom: 0;
       }
 
@@ -100,6 +108,7 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-size: 0.85rem;
+        color: var(--light-text);
       }
 
       .table tbody tr {
@@ -110,6 +119,10 @@
       .table tbody tr:hover {
         background: rgba(76, 201, 240, 0.1) !important;
         transform: translateX(5px);
+      }
+
+      .table tbody td {
+        color: var(--light-text);
       }
 
       .badge {
@@ -133,23 +146,26 @@
       .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+        color: white;
       }
 
       .btn-outline-light {
         border-color: rgba(255, 255, 255, 0.2);
-        color: white;
+        color: var(--light-text);
         transition: all 0.3s ease;
       }
 
       .btn-outline-light:hover {
         background: rgba(255, 255, 255, 0.1);
         transform: translateY(-2px);
+        color: white;
       }
 
       .empty-state {
         background: rgba(76, 201, 240, 0.05);
         border: 1px dashed rgba(76, 201, 240, 0.3);
         border-radius: 16px;
+        color: var(--light-text);
       }
 
       .concert-image {
@@ -166,6 +182,20 @@
         background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         margin-top: auto;
+        color: var(--light-text);
+      }
+
+      /* Text styling */
+      h1, h2, h3, h4, h5, h6 {
+        color: var(--light-text);
+      }
+
+      .text-muted {
+        color: var(--muted-text) !important;
+      }
+
+      small, .small {
+        color: var(--muted-text);
       }
 
       /* Animation classes */
@@ -249,6 +279,14 @@
           color: white !important;
         }
       }
+      
+      /* Booking ID styling */
+      .booking-id {
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        color: var(--primary);
+        letter-spacing: 1px;
+      }
     </style>
   </head>
   <body>
@@ -258,7 +296,7 @@
           <div class="d-flex justify-content-between align-items-center">
             <h1 class="m-0">
               <a
-                href="/"
+                href="/bookings"
                 class="text-decoration-none d-flex align-items-center"
               >
                 <i
@@ -393,7 +431,7 @@
           <i class="fas fa-ticket-alt me-2" style="color: var(--primary)"></i>
           My Bookings
         </h2>
-        <a href="/concerts" class="btn btn-outline-light hover-scale">
+        <a href="/bookings" class="btn btn-outline-light hover-scale">
           <i class="fas fa-arrow-left me-1"></i> Back to Concerts
         </a>
       </div>
@@ -406,7 +444,7 @@
         ></i>
         <h3>No bookings found</h3>
         <p class="mb-4">You haven't booked any concerts yet.</p>
-        <a href="/concerts" class="btn btn-primary">
+        <a href="/bookings" class="btn btn-primary">
           <i class="fas fa-music me-2"></i> Browse Concerts
         </a>
       </div>
@@ -425,9 +463,13 @@
             </tr>
           </thead>
           <tbody>
-            <% booking.forEach(book => { %>
-            <tr>
-              <td><%= book._id %></td>
+            <% booking.forEach(book => { 
+              // Generate a formatted booking ID with capital letters and random numbers
+              const bookingId = 'CH-' + Math.random().toString(36).substring(2, 6).toUpperCase() + 
+                              '-' + Math.floor(1000 + Math.random() * 9000);
+            %>
+            <tr data-booking-id="<%= book._id %>">
+              <td class="booking-id"><%= bookingId %></td>
               <td>
                 <div class="d-flex align-items-center">
                   <div class="avatar me-3">
@@ -435,7 +477,7 @@
                   </div>
                   <div>
                     <div style="font-weight: 600"><%= book.concert.name %></div>
-                    <small style="opacity: 0.8">
+                    <small class="text-muted">
                       <i class="fas fa-calendar-day me-1"></i>
                       <%= book.bookingDate.toLocaleDateString('en-US', {
                       weekday: 'short', month: 'short', day: 'numeric', year:
@@ -452,7 +494,7 @@
                 <%= book.bookingDate.toLocaleDateString('en-US', { weekday:
                 'short', month: 'short', day: 'numeric', year: 'numeric' }) %>
                 <br />
-                <small style="opacity: 0.8"
+                <small class="text-muted"
                   ><%= book.bookingDate.toLocaleTimeString() %></small
                 >
               </td>
@@ -466,19 +508,24 @@
               <td class="no-print">
                 <div class="d-flex gap-2">
                   <a
-                    href="/bookings/view/<%= book._id %>"
+                    href="/bookings/<%= book.concert._id %>"
                     class="btn btn-sm btn-outline-primary"
                   >
                     <i class="fas fa-eye"></i>
                   </a>
-                  <% if (book.status === 'confirmed') { %>
                   <button
-                    class="btn btn-sm btn-outline-danger cancel-booking"
+                    class="btn btn-sm btn-outline-secondary download-booking"
                     data-booking-id="<%= book._id %>"
+                    data-booking-code="<%= bookingId %>"
+                    title="Download as PDF"
                   >
-                    <i class="fas fa-times"></i>
+                    <i class="fas fa-file-pdf"></i>
                   </button>
-                  <% } %>
+                  <form action="/bookings/<%= book._id %>/cancel" method="POST">
+                  <button
+                    class="btn btn-sm btn-outline-danger"><i class="fas fa-times"></i>
+                  </button>
+                  </form>
                 </div>
               </td>
             </tr>
@@ -496,17 +543,17 @@
                 <i class="fas fa-user me-2"></i> User Information
               </h5>
               <div class="mb-3">
-                <div style="opacity: 0.8; font-size: 0.9rem">Name</div>
-                <div style="font-weight: 500"><%= booking[0].user.name %></div>
+                <div class="text-muted small">Name</div>
+                <div style="font-weight: 500"><%= booking[0].user.username %></div>
               </div>
               <div class="mb-3">
-                <div style="opacity: 0.8; font-size: 0.9rem">Email</div>
+                <div class="text-muted small">Email</div>
                 <div style="font-weight: 500"><%= booking[0].user.email %></div>
               </div>
               <div>
-                <div style="opacity: 0.8; font-size: 0.9rem">Phone</div>
+                <div class="text-muted small">Role</div>
                 <div style="font-weight: 500">
-                  <%= booking[0].user.phone || 'Not provided' %>
+                  <%= booking[0].user.role || 'Not provided' %>
                 </div>
               </div>
             </div>
@@ -519,17 +566,17 @@
                 <i class="fas fa-receipt me-2"></i> Booking Summary
               </h5>
               <div class="d-flex justify-content-between mb-2">
-                <span style="opacity: 0.8">Total Bookings:</span>
+                <span class="text-muted">Total Bookings:</span>
                 <span style="font-weight: 500"><%= booking.length %></span>
               </div>
               <div class="d-flex justify-content-between mb-2">
-                <span style="opacity: 0.8">Total Tickets:</span>
+                <span class="text-muted">Total Tickets:</span>
                 <span style="font-weight: 500">
                   <%= booking.reduce((sum, book) => sum + book.tickets, 0) %>
                 </span>
               </div>
               <div class="d-flex justify-content-between mb-4">
-                <span style="opacity: 0.8">Total Amount:</span>
+                <span class="text-muted">Total Amount:</span>
                 <span style="font-weight: 600">
                   $<%= booking.reduce((sum, book) => sum + (book.totalAmount ||
                   0), 0).toFixed(2) %>
@@ -540,21 +587,8 @@
                 <button
                   class="btn btn-primary"
                   onclick="printBookings()"
-                  style="
-                    background: linear-gradient(
-                      135deg,
-                      #4361ee 0%,
-                      #3a0ca3 100%
-                    );
-                    border: none;
-                    border-radius: 10px;
-                    padding: 0.5rem 1.25rem;
-                  "
                 >
-                  <i class="fas fa-print me-1"></i> Print
-                </button>
-                <button class="btn btn-primary" onclick="window.print()">
-                  <i class="fas fa-print me-1"></i> Export
+                  <i class="fas fa-print me-1"></i> Print All
                 </button>
               </div>
             </div>
@@ -563,54 +597,49 @@
       </div>
       <% } %>
     </div>
-    
 
     <footer class="bg-dark text-white py-4 mt-auto footer">
       <div class="container-fluid px-0">
         <div class="text-center px-4">
-          <p class="mb-3" style="opacity: 0.7">
+          <p class="mb-3 text-muted">
             © <%= new Date().getFullYear() %> ConcertHub. All rights reserved.
           </p>
           <div class="mt-3 d-flex justify-content-center gap-3">
             <a
               href="/about"
-              class="text-decoration-none hover-underline"
-              style="opacity: 0.7"
+              class="text-decoration-none hover-underline text-muted"
               >About Us</a
             >
-            <span style="opacity: 0.3">•</span>
+            <span class="text-muted">•</span>
             <a
               href="/contact"
-              class="text-decoration-none hover-underline"
-              style="opacity: 0.7"
+              class="text-decoration-none hover-underline text-muted"
               >Contact</a
             >
-            <span style="opacity: 0.3">•</span>
+            <span class="text-muted">•</span>
             <a
               href="/privacy"
-              class="text-decoration-none hover-underline"
-              style="opacity: 0.7"
+              class="text-decoration-none hover-underline text-muted"
               >Privacy Policy</a
             >
-            <span style="opacity: 0.3">•</span>
+            <span class="text-muted">•</span>
             <a
               href="/terms"
-              class="text-decoration-none hover-underline"
-              style="opacity: 0.7"
+              class="text-decoration-none hover-underline text-muted"
               >Terms of Service</a
             >
           </div>
           <div class="mt-3">
-            <a href="#" class="mx-2" style="font-size: 1.25rem; opacity: 0.7"
+            <a href="#" class="mx-2 text-muted" style="font-size: 1.25rem"
               ><i class="fab fa-facebook"></i
             ></a>
-            <a href="#" class="mx-2" style="font-size: 1.25rem; opacity: 0.7"
+            <a href="#" class="mx-2 text-muted" style="font-size: 1.25rem"
               ><i class="fab fa-twitter"></i
             ></a>
-            <a href="#" class="mx-2" style="font-size: 1.25rem; opacity: 0.7"
+            <a href="#" class="mx-2 text-muted" style="font-size: 1.25rem"
               ><i class="fab fa-instagram"></i
             ></a>
-            <a href="#" class="mx-2" style="font-size: 1.25rem; opacity: 0.7"
+            <a href="#" class="mx-2 text-muted" style="font-size: 1.25rem"
               ><i class="fab fa-youtube"></i
             ></a>
           </div>
@@ -618,160 +647,264 @@
       </div>
     </footer>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-      // Add JavaScript for cancel booking functionality
-      document.querySelectorAll(".cancel-booking").forEach((button) => {
-        button.addEventListener("click", function () {
-          const bookingId = this.getAttribute("data-booking-id");
-          if (confirm("Are you sure you want to cancel this booking?")) {
-            fetch(`/bookings/cancel/${bookingId}`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            })
-              .then((response) => response.json())
-              .then((data) => {
-                if (data.success) {
-                  alert("Booking cancelled successfully");
-                  window.location.reload();
-                } else {
-                  alert("Error cancelling booking: " + data.message);
-                }
+      // Wait for the DOM to be fully loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // Add JavaScript for cancel booking functionality
+        document.querySelectorAll(".cancel-booking").forEach((button) => {
+          button.addEventListener("click", function () {
+            const bookingId = this.getAttribute("data-booking-id");
+            const bookingCode = this.getAttribute("data-booking-code");
+            
+            if (confirm(`Are you sure you want to cancel booking ${bookingCode}?`)) {
+              // Show loading state
+              const originalContent = this.innerHTML;
+              this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+              this.disabled = true;
+              
+              fetch(`/bookings/cancel/${bookingId}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
               })
-              .catch((error) => {
-                console.error("Error:", error);
-                alert("An error occurred while cancelling the booking");
-              });
-          }
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data.success) {
+                    alert(`Booking ${bookingCode} cancelled successfully`);
+                    window.location.reload();
+                  } else {
+                    alert("Error cancelling booking: " + data.message);
+                    this.innerHTML = originalContent;
+                    this.disabled = false;
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                  alert("An error occurred while cancelling the booking");
+                  this.innerHTML = originalContent;
+                  this.disabled = false;
+                });
+            }
+          });
+        });
+
+        // Function to generate PDF for a single booking
+        function generateBookingPDF(bookingId, bookingCode) {
+          // Find the booking row
+          const bookingRow = document.querySelector(`tr[data-booking-id="${bookingId}"]`);
+          if (!bookingRow) return;
+
+          // Show loading indicator
+          const downloadBtn = document.querySelector(`button[data-booking-id="${bookingId}"]`);
+          const originalContent = downloadBtn.innerHTML;
+          downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+          downloadBtn.disabled = true;
+
+          // Create a temporary div to hold the content
+          const tempDiv = document.createElement("div");
+          tempDiv.style.position = "absolute";
+          tempDiv.style.left = "-9999px";
+          tempDiv.style.width = "600px";
+          tempDiv.style.padding = "20px";
+          tempDiv.style.backgroundColor = "white";
+          tempDiv.style.color = "black";
+          tempDiv.style.borderRadius = "8px";
+          tempDiv.style.boxShadow = "0 0 10px rgba(0,0,0,0.1)";
+
+          // Get booking details
+          const concertName = bookingRow.querySelector("td:nth-child(2) div:nth-child(1)").textContent.trim();
+          const bookingDate = bookingRow.querySelector("td:nth-child(2) small").textContent.trim();
+          const tickets = bookingRow.querySelector("td:nth-child(3)").textContent.trim();
+          const totalAmount = bookingRow.querySelector("td:nth-child(4)").textContent.trim();
+          const status = bookingRow.querySelector("td:nth-child(6) .badge").textContent.trim();
+          const statusColor = status === "confirmed" ? "#38a169" : "#ffbe0b";
+
+          // Create PDF content
+          tempDiv.innerHTML = `
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h1 style="color: #4361ee; margin-bottom: 5px; font-size: 24px;">ConcertHub</h1>
+              <p style="color: #666; font-size: 16px;">Booking Confirmation</p>
+            </div>
+            
+            <div style="margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;">
+              <h2 style="color: #333; font-size: 20px; margin-bottom: 5px;">${concertName}</h2>
+              <p style="color: #666; font-size: 14px;"><strong>Booking ID:</strong> ${bookingCode}</p>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 250px; margin-bottom: 15px;">
+                <h3 style="color: #4361ee; margin-bottom: 10px; font-size: 16px;">Booking Details</h3>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>Date:</strong> ${bookingDate}</p>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>Tickets:</strong> ${tickets}</p>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>Total Amount:</strong> ${totalAmount}</p>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>Status:</strong> <span style="color: ${statusColor}">${status}</span></p>
+              </div>
+              
+              <div style="flex: 1; min-width: 250px;">
+                <h3 style="color: #4361ee; margin-bottom: 10px; font-size: 16px;">User Information</h3>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>Name:</strong> <%= user.username %></p>
+                <p style="margin: 5px 0; font-size: 14px;"><strong>Email:</strong> <%= user.email %></p>
+              </div>
+            </div>
+            
+            <div style="margin-top: 30px; padding-top: 15px; border-top: 1px solid #eee; text-align: center;">
+              <p style="color: #666; font-size: 14px;">Thank you for using ConcertHub</p>
+              <p style="font-size: 12px; color: #999;">Booking generated on ${new Date().toLocaleDateString()}</p>
+            </div>
+            
+            <div style="text-align: right; font-size: 10px; color: #999; margin-top: 10px;">
+              Booking ID: ${bookingCode}
+            </div>
+          `;
+
+          document.body.appendChild(tempDiv);
+
+          // Use html2canvas to capture the content
+          html2canvas(tempDiv, {
+            scale: 2, // Higher quality
+            logging: false,
+            useCORS: true,
+            allowTaint: true
+          }).then((canvas) => {
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+              orientation: 'portrait',
+              unit: 'mm',
+              format: 'a4'
+            });
+
+            // Calculate image dimensions to fit the PDF page
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            
+            const imgWidth = pageWidth - 20; // 10mm margin on each side
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            
+            // Add image to PDF
+            pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+            
+            // Save the PDF
+            pdf.save(`ConcertHub-Booking-${bookingCode}.pdf`);
+            
+            // Clean up
+            document.body.removeChild(tempDiv);
+            
+            // Restore button state
+            downloadBtn.innerHTML = originalContent;
+            downloadBtn.disabled = false;
+          }).catch(error => {
+            console.error("Error generating PDF:", error);
+            alert("Error generating PDF. Please try again.");
+            
+            // Clean up and restore button state even if there's an error
+            document.body.removeChild(tempDiv);
+            downloadBtn.innerHTML = originalContent;
+            downloadBtn.disabled = false;
+          });
+        }
+
+        // Add event listeners to download buttons
+        document.querySelectorAll(".download-booking").forEach((button) => {
+          button.addEventListener("click", function() {
+            const bookingId = this.getAttribute("data-booking-id");
+            const bookingCode = this.getAttribute("data-booking-code");
+            generateBookingPDF(bookingId, bookingCode);
+          });
+        });
+
+        // Print all bookings function
+        window.printBookings = function() {
+          const printWindow = window.open("", "_blank");
+
+          // Get the HTML content to print
+          const contentToPrint = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>My Bookings</title>
+              <style>
+                  body { font-family: Arial, sans-serif; margin: 20px; }
+                  h1 { color: #333; text-align: center; }
+                  .print-header { margin-bottom: 20px; text-align: center; }
+                  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                  th { background-color: #f2f2f2; text-align: left; padding: 8px; }
+                  td { padding: 8px; border-bottom: 1px solid #ddd; }
+                  .summary { margin-top: 30px; padding: 15px; background-color: #f9f9f9; }
+                  .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
+                  @page { size: auto; margin: 10mm; }
+                  .booking-id { font-family: 'Courier New', monospace; font-weight: bold; color: #4361ee; }
+              </style>
+          </head>
+          <body>
+              <div class="print-header">
+                  <h1>My Concert Bookings</h1>
+                  <p>Printed on ${new Date().toLocaleDateString()}</p>
+              </div>
+              
+              <table>
+                  <thead>
+                      <tr>
+                          <th>Booking ID</th>
+                          <th>Concert</th>
+                          <th>Tickets</th>
+                          <th>Total Price</th>
+                          <th>Booking Date</th>
+                          <th>Status</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      ${document.querySelector("tbody").innerHTML.replace(/<td style="[^"]*">/g, "<td>")}
+                  </tbody>
+              </table>
+              
+              <div class="summary">
+                  <h3>Booking Summary</h3>
+                  <p>Total Bookings: ${document.querySelectorAll("tbody tr").length}</p>
+                  <p>Total Tickets: ${Array.from(document.querySelectorAll("tbody tr")).reduce(
+                    (sum, row) => sum + parseInt(row.querySelector("td:nth-child(3)").textContent), 0)}</p>
+                  <p>Total Amount: $${Array.from(document.querySelectorAll("tbody tr"))
+                    .reduce((sum, row) => {
+                      const priceText = row.querySelector("td:nth-child(4)").textContent;
+                      return sum + parseFloat(priceText.replace("$", "") || 0);
+                    }, 0)
+                    .toFixed(2)}</p>
+              </div>
+              
+              <div class="footer">
+                  <p>Thank you for using ConcertHub</p>
+                  <p>© ${new Date().getFullYear()} ConcertHub. All rights reserved.</p>
+              </div>
+          </body>
+          </html>
+          `;
+
+          // Write the content to the new window
+          printWindow.document.open();
+          printWindow.document.write(contentToPrint);
+          printWindow.document.close();
+
+          // Wait for content to load before printing
+          printWindow.onload = function() {
+            setTimeout(() => {
+              printWindow.print();
+              printWindow.close();
+            }, 500);
+          };
+        };
+
+        // Add animation to table rows
+        document.querySelectorAll("tbody tr").forEach((row, index) => {
+          row.style.animationDelay = `${index * 0.05}s`;
+          row.classList.add("fade-in");
         });
       });
-
-      // Export to PDF function (placeholder - would need a PDF library like jsPDF)
-      function printBookings() {
-        // Create a new window for printing
-        const printWindow = window.open("", "_blank");
-
-        // Get the HTML content to print
-        const contentToPrint = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>My Bookings</title>
-            <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                h1 { color: #333; text-align: center; }
-                .print-header { margin-bottom: 20px; text-align: center; }
-                .print-header img { height: 60px; }
-                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                th { background-color: #f2f2f2; text-align: left; padding: 8px; }
-                td { padding: 8px; border-bottom: 1px solid #ddd; }
-                .summary { margin-top: 30px; padding: 15px; background-color: #f9f9f9; }
-                .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
-                @page { size: auto; margin: 10mm; }
-            </style>
-        </head>
-        <body>
-            <div class="print-header">
-                <h1>My Concert Bookings</h1>
-                <p>Printed on ${new Date().toLocaleDateString()}</p>
-            </div>
-            
-            <table>
-                <thead>
-                    <tr>
-                        <th>Booking ID</th>
-                        <th>Concert</th>
-                        <th>Tickets</th>
-                        <th>Total Price</th>
-                        <th>Booking Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${document
-                      .querySelector("tbody")
-                      .innerHTML.replace(/<td style="[^"]*">/g, "<td>")}
-                </tbody>
-            </table>
-            
-            <div class="summary">
-                <h3>Booking Summary</h3>
-                <p>Total Bookings: ${
-                  document.querySelectorAll("tbody tr").length
-                }</p>
-                <p>Total Tickets: ${Array.from(
-                  document.querySelectorAll("tbody tr")
-                ).reduce(
-                  (sum, row) =>
-                    sum +
-                    parseInt(row.querySelector("td:nth-child(3)").textContent),
-                  0
-                )}</p>
-                <p>Total Amount: $${Array.from(
-                  document.querySelectorAll("tbody tr")
-                )
-                  .reduce((sum, row) => {
-                    const priceText =
-                      row.querySelector("td:nth-child(4)").textContent;
-                    return sum + parseFloat(priceText.replace("$", "") || 0);
-                  }, 0)
-                  .toFixed(2)}</p>
-            </div>
-            
-            <div class="footer">
-                <p>Thank you for using ConcertHub</p>
-                <p>© ${new Date().getFullYear()} ConcertHub. All rights reserved.</p>
-            </div>
-        </body>
-        </html>
-    `;
-
-        // Write the content to the new window
-        printWindow.document.open();
-        printWindow.document.write(contentToPrint);
-        printWindow.document.close();
-
-        // Wait for content to load before printing
-        printWindow.onload = function () {
-          setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-          }, 500);
-        };
-      }
-
-      // Add animation to table rows
-      document.querySelectorAll("tbody tr").forEach((row, index) => {
-        row.style.animationDelay = `${index * 0.05}s`;
-        row.classList.add("fade-in");
-      });
     </script>
-    <style>
-      @media print {
-        body * {
-          visibility: hidden;
-        }
-        .container,
-        .container * {
-          visibility: visible;
-        }
-        .container {
-          position: absolute;
-          left: 0;
-          top: 0;
-          width: 100%;
-        }
-        .btn,
-        .navbar,
-        .footer {
-          display: none !important;
-        }
-        a {
-          text-decoration: none !important;
-          color: inherit !important;
-        }
-      }
-    </style>
   </body>
 </html>
